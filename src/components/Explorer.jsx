@@ -5,15 +5,10 @@ import Reveal from "./Reveal";
 
 const ease = [0.22, 1, 0.36, 1];
 
-// Determines whether the image is a logo/icon (png) vs a photo (webp/jpg)
-function isLogoImage(src) {
-  return src?.endsWith(".png");
-}
-
 export default function Explorer() {
   const [active, setActive] = useState(0);
   const current = explorer[active];
-  const logo = isLogoImage(current.image);
+  const logo = current.isLogo;
 
   return (
     <section id="collection" className="relative bg-ink px-6 py-24 md:px-10 md:py-32">
@@ -55,24 +50,25 @@ export default function Explorer() {
         {/* Content stage */}
         <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-2 md:gap-16">
 
-          {/* Image panel */}
-          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[6px] bg-surface md:aspect-[3/4]">
-            {/* Ambient glow behind logo images */}
+          {/* Image panel — wide aspect for logos, portrait for photos */}
+          <div className={`relative w-full overflow-hidden rounded-[6px] bg-surface ${
+            logo ? "aspect-[16/9]" : "aspect-[4/5] md:aspect-[3/4]"
+          }`}>
+            {/* Brass ambient glow */}
             <AnimatePresence>
-              {logo && (
-                <motion.div
-                  key={current.key + "-glow"}
-                  className="pointer-events-none absolute inset-0 z-0"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 1.2 }}
-                  style={{
-                    background:
-                      "radial-gradient(ellipse 70% 60% at 50% 55%, rgba(185,143,82,0.18) 0%, transparent 70%)",
-                  }}
-                />
-              )}
+              <motion.div
+                key={current.key + "-glow"}
+                className="pointer-events-none absolute inset-0 z-0"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1 }}
+                style={{
+                  background: logo
+                    ? "radial-gradient(ellipse 80% 70% at 50% 50%, rgba(185,143,82,0.14) 0%, transparent 70%)"
+                    : "none",
+                }}
+              />
             </AnimatePresence>
 
             <AnimatePresence mode="wait">
@@ -80,24 +76,22 @@ export default function Explorer() {
                 key={current.key}
                 src={current.image}
                 alt={current.heading}
-                initial={{ opacity: 0, scale: logo ? 0.88 : 1.08, filter: "blur(12px)" }}
+                initial={{ opacity: 0, scale: 0.92, filter: "blur(10px)" }}
                 animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                exit={{ opacity: 0, scale: logo ? 0.96 : 1.03, filter: "blur(8px)" }}
-                transition={{ duration: 0.9, ease }}
+                exit={{ opacity: 0, scale: 0.97, filter: "blur(6px)" }}
+                transition={{ duration: 0.85, ease }}
                 className={`absolute inset-0 h-full w-full ${
                   logo
-                    ? "object-contain p-10 drop-shadow-[0_0_48px_rgba(185,143,82,0.35)]"
+                    ? "object-contain p-8 drop-shadow-[0_0_40px_rgba(185,143,82,0.25)]"
                     : "object-cover"
                 }`}
               />
             </AnimatePresence>
 
-            {/* Bottom gradient only for photos */}
             {!logo && (
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent" />
             )}
 
-            {/* Tag badge */}
             <AnimatePresence mode="wait">
               <motion.span
                 key={current.key + "-tag"}

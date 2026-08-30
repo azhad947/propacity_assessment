@@ -1,0 +1,197 @@
+import { useEffect, useRef } from "react";
+import { gsap, prefersReducedMotion } from "../lib/gsap";
+
+// Premium scroll-pinned cinematic interlude.
+// Phase 1 — 5 images float in from different positions with slight rotations
+//            while the editorial statement fades in word by word.
+// Phase 2 — all images converge to center, stack, and the hero image
+//            expands to fill the viewport.
+// Phase 3 — ink overlay dissolves in, releasing into the next section.
+export default function ZoomReveal({ images, lines }) {
+  const wrapRef   = useRef(null);
+  const stageRef  = useRef(null);
+  const wordsRef  = useRef([]);
+  const imgsRef   = useRef([]);
+  const heroRef   = useRef(null);
+  const overlayRef = useRef(null);
+
+  useEffect(() => {
+    const wrap    = wrapRef.current;
+    const stage   = stageRef.current;
+    const overlay = overlayRef.current;
+    const hero    = heroRef.current;
+    if (!wrap || !stage || prefersReducedMotion()) return undefined;
+
+    const words = wordsRef.current.filter(Boolean);
+    const imgs  = imgsRef.current.filter(Boolean);
+
+    const ctx = gsap.context(() => {
+      // Set initial states
+      gsap.set(words, { opacity: 0, y: 22 });
+      gsap.set(imgs,  { opacity: 0 });
+      gsap.set(hero,  { opacity: 0, scale: 0.08, clipPath: "inset(4% 4% 4% 4% round 12px)" });
+      gsap.set(overlay, { opacity: 0 });
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: wrap,
+          start: "top top",
+          end: "+=280%",
+          scrub: 1.2,
+          pin: true,
+          anticipatePin: 1,
+        },
+      });
+
+      // ── Phase 1 (0 → 0.35): floating images drift in ──────────────────────
+      imgs.forEach((img, i) => {
+        tl.to(img, { opacity: 1, duration: 0.08 }, i * 0.04);
+      });
+
+      // ── Phase 2 (0.05 → 0.45): words reveal one by one ───────────────────
+      words.forEach((word, i) => {
+        tl.to(
+          word,
+          { opacity: 1, y: 0, duration: 0.1, ease: "power2.out" },
+          0.05 + i * 0.045,
+        );
+      });
+
+      // ── Phase 3 (0.45 → 0.55): words fade out, images start converging ───
+      tl.to(words, { opacity: 0, y: -18, duration: 0.08, stagger: 0.01 }, 0.45);
+
+      // Each floating image converges to center and fades
+      imgs.forEach((img) => {
+        tl.to(
+          img,
+          {
+            x: 0, y: 0, rotation: 0,
+            xPercent: -50, yPercent: -50,
+            left: "50%", top: "50%",
+            opacity: 0,
+            duration: 0.18,
+            ease: "power3.in",
+          },
+          0.48,
+        );
+      });
+
+      // ── Phase 4 (0.55 → 0.85): hero image expands to fullscreen ──────────
+      tl.to(
+        hero,
+        {
+          opacity: 1,
+          scale: 1,
+          clipPath: "inset(0% 0% 0% 0% round 0px)",
+          duration: 0.3,
+          ease: "power2.out",
+        },
+        0.55,
+      );
+
+      // ── Phase 5 (0.82 → 1): ink dissolve out ─────────────────────────────
+      tl.to(overlay, { opacity: 1, duration: 0.18, ease: "none" }, 0.82);
+    }, wrap);
+
+    return () => ctx.revert();
+  }, []);
+
+  // Layout config for the 4 floating logo cards (excluding hero photo)
+  // No fixed height — cards size to their content so logos are never cropped.
+  // object-contain + generous padding ensures the full logo is always visible.
+  const floatConfig = [
+    { top: "10%", left: "11%",  w: "w-44 md:w-60", rot: "-5deg", x: "-18px", y: "24px"  },
+    { top: "10%", left: "75%", w: "w-36 md:w-48", rot: "4deg",  x: "18px",  y: "-12px" },
+    { top: "58%", left: "9%",  w: "w-40 md:w-52", rot: "3deg",  x: "-22px", y: "-18px" },
+    { top: "55%", left: "80%", w: "w-44 md:w-56", rot: "-4deg", x: "22px",  y: "18px"  },
+  ];
+
+  return (
+    <section ref={wrapRef} className="relative bg-ink">
+      <div
+        ref={stageRef}
+        className="relative h-screen w-full overflow-hidden bg-ink"
+      >
+        {/* ── Floating logo cards ── */}
+        {floatConfig.map((cfg, i) => (
+          <div
+            key={i}
+            ref={(el) => (imgsRef.current[i] = el)}
+            className={`pointer-events-none absolute ${cfg.w} rounded-[8px] border border-parchment/10 bg-surface/80 p-5 shadow-2xl backdrop-blur-sm`}
+            style={{
+              top: cfg.top,
+              left: cfg.left,
+              transform: `rotate(${cfg.rot}) translate(${cfg.x}, ${cfg.y})`,
+              opacity: 0,
+            }}
+          >
+            <img
+              src={images[i + 1] ?? images[0]}
+              alt=""
+              className="h-12 w-full object-contain md:h-16"
+            />
+          </div>
+        ))}
+
+        {/* ── Editorial statement ── */}
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center">
+          <p className="font-display text-3xl leading-[1.55] text-parchment sm:text-4xl md:text-6xl md:leading-[1.5]">
+            {lines.map((line, li) => (
+              <span key={li} className="block">
+                {line.split(" ").map((word, wi) => (
+                  <span
+                    key={wi}
+                    ref={(el) => {
+                      const idx = lines
+                        .slice(0, li)
+                        .reduce((acc, l) => acc + l.split(" ").length, 0) + wi;
+                      wordsRef.current[idx] = el;
+                    }}
+                    className="mr-[0.28em] inline-block"
+                    style={{ opacity: 0 }}
+                  >
+                    {word}
+                  </span>
+                ))}
+              </span>
+            ))}
+          </p>
+        </div>
+
+        {/* ── Hero image — expands to fullscreen ── */}
+        <div
+          ref={heroRef}
+          className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center will-change-transform"
+          style={{
+            opacity: 0,
+            clipPath: "inset(4% 4% 4% 4% round 12px)",
+            transform: "scale(0.08)",
+          }}
+        >
+          {/* Dark surface so the wide logo has a proper backdrop */}
+          <div className="absolute inset-0 bg-ink" />
+          <img
+            src={images[0]}
+            alt="MUREC"
+            className="relative z-10 max-h-[55%] max-w-[70%] object-contain drop-shadow-[0_0_80px_rgba(185,143,82,0.3)]"
+          />
+          {/* Subtle brass glow behind the logo */}
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(185,143,82,0.12) 0%, transparent 70%)",
+            }}
+          />
+        </div>
+
+        {/* ── Ink dissolve ── */}
+        <div
+          ref={overlayRef}
+          className="pointer-events-none absolute inset-0 z-30 bg-ink"
+          style={{ opacity: 0 }}
+        />
+      </div>
+    </section>
+  );
+}

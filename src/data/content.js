@@ -27,6 +27,10 @@ export const hero = {
 
 // The three-way explorer — direct analogue of Timeless's Flavours / Bar / Snacks
 // tabbed menu, re-purposed with Murec's three home-page pillars.
+// madhusudan.webp = 1009×428 wide badge logo (2.36:1)
+// murec.webp / murec.png = 202×107 wide wordmark (1.89:1)
+// All three are logos — none are photos. isLogo=true tells components
+// to use object-contain + wide aspect ratio instead of object-cover portrait.
 export const explorer = [
   {
     key: "legacy",
@@ -36,6 +40,7 @@ export const explorer = [
     cta: { label: "Our History", href: "https://murec.com/legacy.php" },
     image: `${IMG}/madhusudan.webp`,
     tag: "78+ years",
+    isLogo: true,
   },
   {
     key: "principles",
@@ -45,6 +50,7 @@ export const explorer = [
     cta: { label: "Explore More", href: "https://murec.com/principles.php" },
     image: `${IMG}/murec.png`,
     tag: "Our values",
+    isLogo: true,
   },
   {
     key: "collection",
@@ -54,6 +60,7 @@ export const explorer = [
     cta: { label: "Discover More", href: "https://murec.com/Forest-Walk.php" },
     image: `${IMG}/murec.webp`,
     tag: "The portfolio",
+    isLogo: true,
   },
 ];
 
