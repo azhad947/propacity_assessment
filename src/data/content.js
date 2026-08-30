@@ -56,6 +56,52 @@ export const explorer = [
   },
 ];
 
+export const stats = {
+  eyebrow: "By The Numbers",
+  title: "Scale built on decades",
+  items: [
+    { value: 78, suffix: "+", label: "Years of Legacy", bg: `${IMG}/counterbg1.webp` },
+    { value: 100, suffix: "M+", label: "Family Impacted", bg: `${IMG}/counterbg2.webp` },
+    { value: 7, suffix: "+", label: "Sectors of Operation", bg: `${IMG}/counterbg3.webp` },
+  ],
+};
+
+export const mission = {
+  eyebrow: "Mission",
+  title: "Values into living spaces",
+  body: "Our mission is to blend legacy with innovation, turning values into living spaces that endure for generations. Guided by transparency, uncompromising quality, and the promise of trust, we aim to build not just projects, but lasting relationships. For us, real estate is an opportunity to serve, to inspire, and to build with conscience.",
+  image: `${IMG}/mission.webp`,
+};
+
+export const vision = {
+  eyebrow: "Vision",
+  title: "Timeless design, unquestioned trust",
+  body: "At MUREC, our vision is to redefine real estate by carrying forward the Madhusudhan family's heritage of integrity, fairness, and quality. We aspire to create homes where pride is natural, trust is unquestioned, and design is timeless; spaces that honor the past while embracing the possibilities of tomorrow.",
+  image: `${IMG}/vision.webp`,
+};
+
+export const board = {
+  eyebrow: "Leadership",
+  title: "The board of MUREC",
+  members: [
+    {
+      photo: `${IMG}/member2.webp`,
+      name: "Moolchand Aggarwal",
+      bio: "Born in 1956, Moolchand expanded the family's reach into paper, steel, and dairy, and later real estate. For him, entrepreneurship was patriotism—building industries was a way of serving the nation. His philosophy endures at the core of MUREC: focus on quality, and profit will follow.",
+    },
+    {
+      photo: `${IMG}/member1.webp`,
+      name: "Amit Aggarwal",
+      bio: "A hands-on leader whose day once began at dawn in the dairy yards, Amit carries forward the Madhusudhan discipline of uncompromising quality. For him, business is service, and milk was never just a product—it was nutrition for the nation. At MUREC, his oath remains unchanged: quality above all, trust in every detail.",
+    },
+    {
+      photo: `${IMG}/member4.webp`,
+      name: "Amogh Bansal",
+      bio: "Representing the new generation, Amogh blends legacy with modern vision. After rebranding the Group's steel business as Shakti Steel, he now steers MUREC's real estate journey. For him, innovation is not about leaving the past behind but carrying it forward with fresh eyes. His belief: tomorrow is built best when rooted in trust.",
+    },
+  ],
+};
+
 export const philosophy = {
   eyebrow: "Design Philosophy",
   title: "IGBC Certified Design Philosophy",
