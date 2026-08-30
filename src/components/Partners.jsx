@@ -1,40 +1,119 @@
 import { useRef } from "react";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { partners } from "../data/content";
 import Reveal from "./Reveal";
-import { useScrollParallax } from "../lib/useScrollParallax";
 
-function PartnerCard({ p, offset }) {
-  const ref = useRef(null);
-  useScrollParallax(ref, { distance: offset, scrub: 0.6 });
+const ease = [0.22, 1, 0.36, 1];
+
+function splitLines(text, wordsPerLine = 7) {
+  const words = text.split(" ");
+  const lines = [];
+  for (let i = 0; i < words.length; i += wordsPerLine)
+    lines.push(words.slice(i, i + wordsPerLine).join(" "));
+  return lines;
+}
+
+function PartnerCard({ p, index }) {
+  const cardRef = useRef(null);
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const sx = useSpring(mx, { stiffness: 150, damping: 20 });
+  const sy = useSpring(my, { stiffness: 150, damping: 20 });
+  const rotateX = useTransform(sy, [-0.5, 0.5], ["8deg", "-8deg"]);
+  const rotateY = useTransform(sx, [-0.5, 0.5], ["-8deg", "8deg"]);
+
+  const handleMove = (e) => {
+    const rect = cardRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    mx.set((e.clientX - rect.left) / rect.width - 0.5);
+    my.set((e.clientY - rect.top) / rect.height - 0.5);
+  };
+  const handleLeave = () => { mx.set(0); my.set(0); };
+
+  const lines = splitLines(p.quote);
 
   return (
-    <div
-      ref={ref}
-      className="group flex h-full flex-col justify-between rounded-[6px] border border-hairline bg-surface/60 p-8 transition-colors duration-500 hover:border-brass/40 md:p-10"
+    <motion.div
+      ref={cardRef}
+      onMouseMove={handleMove}
+      onMouseLeave={handleLeave}
+      style={{ rotateX, rotateY, transformPerspective: 900 }}
+      whileHover={{ scale: 1.02 }}
+      transition={{ type: "spring", stiffness: 200, damping: 22 }}
+      className="group relative flex h-full flex-col justify-between overflow-hidden rounded-[8px] border border-hairline bg-surface/60 p-8 md:p-10"
     >
+      <motion.div
+        className="pointer-events-none absolute right-0 top-0 h-24 w-24 rounded-bl-[80px]"
+        initial={{ opacity: 0 }}
+        whileHover={{ opacity: 1 }}
+        transition={{ duration: 0.4 }}
+        style={{
+          background:
+            "radial-gradient(circle at top right, rgba(185,143,82,0.12), transparent 70%)",
+        }}
+      />
+
       <div>
-        <span className="font-display text-5xl text-brass/50">&ldquo;</span>
+        <motion.span
+          className="block font-display text-6xl leading-none text-brass/40"
+          initial={{ opacity: 0, y: -10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease }}
+        >
+          &ldquo;
+        </motion.span>
+
         <p className="mt-4 font-display text-xl italic leading-relaxed text-parchment md:text-2xl">
-          {p.quote}
+          {lines.map((line, i) => (
+            <motion.span
+              key={i}
+              className="block overflow-hidden"
+              initial={{ clipPath: "inset(0 100% 0 0)" }}
+              whileInView={{ clipPath: "inset(0 0% 0 0)" }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.75, ease, delay: 0.1 + i * 0.1 }}
+            >
+              {line}{" "}
+            </motion.span>
+          ))}
         </p>
       </div>
 
-      <div className="mt-10 flex items-center justify-between border-t border-hairline pt-6">
+      {/* Footer */}
+      <motion.div
+        className="mt-10 flex items-center justify-between border-t border-hairline pt-6"
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, ease, delay: 0.35 + lines.length * 0.1 }}
+      >
         <div className="flex items-center gap-4">
-          <img
-            src={p.photo}
-            alt={p.name}
-            className="h-14 w-14 rounded-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0"
-          />
-          <span className="eyebrow text-parchment">{p.name}</span>
+          <div className="relative h-14 w-14 overflow-hidden rounded-full">
+            <motion.img
+              src={p.photo}
+              alt={p.name}
+              className="h-full w-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0"
+            />
+            <motion.div
+              className="pointer-events-none absolute inset-0 rounded-full"
+              initial={{ boxShadow: "inset 0 0 0 0px rgba(185,143,82,0)" }}
+              whileHover={{ boxShadow: "inset 0 0 0 2px rgba(185,143,82,0.7)" }}
+              transition={{ duration: 0.3 }}
+            />
+          </div>
+          <div>
+            <span className="eyebrow block text-parchment">{p.name}</span>
+            <span className="eyebrow mt-1 block text-parchment-dim opacity-60">Partner</span>
+          </div>
         </div>
         <img
           src={p.mark}
           alt={`${p.name} studio mark`}
-          className="h-7 w-auto object-contain opacity-70"
+          className="h-7 w-auto max-w-[100px] object-contain opacity-60 grayscale transition-all duration-500 group-hover:opacity-100 group-hover:grayscale-0"
         />
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -51,9 +130,15 @@ export default function Partners() {
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-10">
           {partners.people.map((p, i) => (
-            <Reveal key={p.name} delay={i * 0.12}>
-              <PartnerCard p={p} offset={i % 2 === 0 ? 34 : -34} />
-            </Reveal>
+            <motion.div
+              key={p.name}
+              initial={{ opacity: 0, y: 48 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.8, ease, delay: i * 0.15 }}
+            >
+              <PartnerCard p={p} index={i} />
+            </motion.div>
           ))}
         </div>
       </div>
