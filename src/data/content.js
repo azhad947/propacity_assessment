@@ -1,4 +1,5 @@
-
+// All copy, links and media sourced from https://www.murec.com/
+// Assets are self-hosted under public/images/ — Vite serves public/ at the site root.
 
 export const IMG = "/images";
 

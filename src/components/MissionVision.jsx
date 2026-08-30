@@ -2,20 +2,11 @@ import { motion } from "framer-motion";
 import { mission, vision } from "../data/content";
 import Reveal from "./Reveal";
 import ParallaxImage from "./ParallaxImage";
+import { splitLines } from "../lib/text";
 
 const ease = [0.22, 1, 0.36, 1];
 
-function splitLines(text, wordsPerLine = 9) {
-  const words = text.split(" ");
-  const lines = [];
-  for (let i = 0; i < words.length; i += wordsPerLine)
-    lines.push(words.slice(i, i + wordsPerLine).join(" "));
-  return lines;
-}
-
 function Block({ eyebrow, title, body, image, alt, reverse }) {
-  const lines = splitLines(body);
-
   return (
     <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-2 md:gap-16">
       <motion.div
@@ -24,11 +15,11 @@ function Block({ eyebrow, title, body, image, alt, reverse }) {
         }`}
         initial={{ opacity: 0, scale: 0.94, filter: "blur(10px)" }}
         whileInView={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-        viewport={{ once: true, margin: "-80px" }}
+        viewport={{ once: true, amount: 0.1 }}
         transition={{ duration: 0.9, ease }}
       >
         <ParallaxImage speed={0.12}>
-          <img src={image} alt={alt} className="h-full w-full object-cover" />
+          <img src={image} alt={alt} loading="lazy" className="h-full w-full object-cover" />
         </ParallaxImage>
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/50 via-transparent to-transparent" />
         <div
@@ -47,21 +38,15 @@ function Block({ eyebrow, title, body, image, alt, reverse }) {
             {title}
           </h3>
         </Reveal>
-
-        <p className="mt-6 max-w-lg text-base leading-relaxed text-parchment-dim md:text-lg">
-          {lines.map((line, i) => (
-            <motion.span
-              key={i}
-              className="block overflow-hidden"
-              initial={{ clipPath: "inset(0 100% 0 0)" }}
-              whileInView={{ clipPath: "inset(0 0% 0 0)" }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.75, ease, delay: 0.1 + i * 0.1 }}
-            >
-              {line}{" "}
-            </motion.span>
-          ))}
-        </p>
+        <motion.p
+          className="mt-6 max-w-lg text-base leading-relaxed text-parchment-dim md:text-lg"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0 }}
+          transition={{ duration: 0.7, ease, delay: 0.2 }}
+        >
+          {body}
+        </motion.p>
       </div>
     </div>
   );

@@ -1,34 +1,13 @@
-import { useRef } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { partners } from "../data/content";
 import Reveal from "./Reveal";
+import { splitLines } from "../lib/text";
+import { useTiltCard } from "../lib/useTiltCard";
 
 const ease = [0.22, 1, 0.36, 1];
 
-function splitLines(text, wordsPerLine = 7) {
-  const words = text.split(" ");
-  const lines = [];
-  for (let i = 0; i < words.length; i += wordsPerLine)
-    lines.push(words.slice(i, i + wordsPerLine).join(" "));
-  return lines;
-}
-
-function PartnerCard({ p, index }) {
-  const cardRef = useRef(null);
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const sx = useSpring(mx, { stiffness: 150, damping: 20 });
-  const sy = useSpring(my, { stiffness: 150, damping: 20 });
-  const rotateX = useTransform(sy, [-0.5, 0.5], ["8deg", "-8deg"]);
-  const rotateY = useTransform(sx, [-0.5, 0.5], ["-8deg", "8deg"]);
-
-  const handleMove = (e) => {
-    const rect = cardRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    mx.set((e.clientX - rect.left) / rect.width - 0.5);
-    my.set((e.clientY - rect.top) / rect.height - 0.5);
-  };
-  const handleLeave = () => { mx.set(0); my.set(0); };
+function PartnerCard({ p }) {
+  const { cardRef, tiltStyle, handleMove, handleLeave } = useTiltCard({ maxTilt: 8 });
 
   const lines = splitLines(p.quote);
 
@@ -37,7 +16,7 @@ function PartnerCard({ p, index }) {
       ref={cardRef}
       onMouseMove={handleMove}
       onMouseLeave={handleLeave}
-      style={{ rotateX, rotateY, transformPerspective: 900 }}
+      style={{ ...tiltStyle }}
       whileHover={{ scale: 1.02 }}
       transition={{ type: "spring", stiffness: 200, damping: 22 }}
       className="group relative flex h-full flex-col justify-between overflow-hidden rounded-[8px] border border-hairline bg-surface/60 p-8 md:p-10"
@@ -68,11 +47,11 @@ function PartnerCard({ p, index }) {
           {lines.map((line, i) => (
             <motion.span
               key={i}
-              className="block overflow-hidden"
-              initial={{ clipPath: "inset(0 100% 0 0)" }}
-              whileInView={{ clipPath: "inset(0 0% 0 0)" }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.75, ease, delay: 0.1 + i * 0.1 }}
+              className="block"
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0 }}
+              transition={{ duration: 0.6, ease, delay: 0.15 + i * 0.1 }}
             >
               {line}{" "}
             </motion.span>
@@ -85,7 +64,7 @@ function PartnerCard({ p, index }) {
         className="mt-10 flex items-center justify-between border-t border-hairline pt-6"
         initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
+        viewport={{ once: true, amount: 0.1 }}
         transition={{ duration: 0.6, ease, delay: 0.35 + lines.length * 0.1 }}
       >
         <div className="flex items-center gap-4">
@@ -137,7 +116,7 @@ export default function Partners() {
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.8, ease, delay: i * 0.15 }}
             >
-              <PartnerCard p={p} index={i} />
+              <PartnerCard p={p} />
             </motion.div>
           ))}
         </div>

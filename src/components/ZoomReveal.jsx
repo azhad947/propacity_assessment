@@ -84,35 +84,43 @@ export default function ZoomReveal({ images, lines }) {
   }, []);
 
 
+  // On mobile: only show 2 cards (top-left, top-right), smaller, no translate offset
+  // On desktop: all 4 cards with rotation and translate
   const floatConfig = [
-    { top: "10%", left: "11%",  w: "w-44 md:w-60", rot: "-5deg", x: "-18px", y: "24px"  },
-    { top: "10%", left: "75%", w: "w-36 md:w-48", rot: "4deg",  x: "18px",  y: "-12px" },
-    { top: "58%", left: "9%",  w: "w-40 md:w-52", rot: "3deg",  x: "-22px", y: "-18px" },
-    { top: "55%", left: "80%", w: "w-44 md:w-56", rot: "-4deg", x: "22px",  y: "18px"  },
+    { top: "12%",  left: "4%",  w: "w-28 sm:w-44 md:w-60", rot: "-5deg", x: "-10px", y: "24px",  mobileHide: false },
+    { top: "12%",  left: "auto", right: "4%", w: "w-28 sm:w-36 md:w-48", rot: "4deg",  x: "10px",  y: "-12px", mobileHide: false },
+    { top: "62%", left: "4%",  w: "w-28 sm:w-40 md:w-52", rot: "3deg",  x: "-12px", y: "-18px", mobileHide: true },
+    { top: "60%", left: "auto", right: "4%", w: "w-28 sm:w-44 md:w-56", rot: "-4deg", x: "12px",  y: "18px",  mobileHide: true },
   ];
 
   return (
     <section ref={wrapRef} className="relative bg-ink">
       <div
         ref={stageRef}
-        className="relative h-screen w-full overflow-hidden bg-ink"
+        className="relative h-[100svh] w-full overflow-hidden bg-ink"
       >
         {floatConfig.map((cfg, i) => (
           <div
             key={i}
             ref={(el) => (imgsRef.current[i] = el)}
-            className={`pointer-events-none absolute ${cfg.w} rounded-[8px] border border-parchment/10 bg-surface/80 p-5 shadow-2xl backdrop-blur-sm`}
+            className={`pointer-events-none absolute rounded-[8px] border border-parchment/10 bg-surface/80 p-3 shadow-2xl backdrop-blur-sm sm:p-5 ${
+              cfg.w
+            } ${
+              cfg.mobileHide ? "hidden sm:block" : ""
+            }`}
             style={{
               top: cfg.top,
               left: cfg.left,
-              transform: `rotate(${cfg.rot}) translate(${cfg.x}, ${cfg.y})`,
+              right: cfg.right,
+              // On mobile skip the translate so cards stay within viewport
+              transform: `rotate(${cfg.rot})`,
               opacity: 0,
             }}
           >
             <img
               src={images[i + 1] ?? images[0]}
               alt=""
-              className="h-12 w-full object-contain md:h-16"
+              className="h-8 w-full object-contain sm:h-12 md:h-16"
             />
           </div>
         ))}

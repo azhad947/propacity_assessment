@@ -1,32 +1,15 @@
 import { useEffect, useRef } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { gsap, prefersReducedMotion } from "../lib/gsap";
 import { stats } from "../data/content";
 import Reveal from "./Reveal";
 import ParallaxImage from "./ParallaxImage";
+import { useTiltCard } from "../lib/useTiltCard";
 
 function StatCard({ stat }) {
   const numRef = useRef(null);
-  const cardRef = useRef(null);
   const state = useRef({ val: 0 });
-
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const sx = useSpring(mx, { stiffness: 150, damping: 20 });
-  const sy = useSpring(my, { stiffness: 150, damping: 20 });
-  const rotateX = useTransform(sy, [-0.5, 0.5], ["6deg", "-6deg"]);
-  const rotateY = useTransform(sx, [-0.5, 0.5], ["-6deg", "6deg"]);
-
-  const handleMove = (e) => {
-    const rect = cardRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    mx.set((e.clientX - rect.left) / rect.width - 0.5);
-    my.set((e.clientY - rect.top) / rect.height - 0.5);
-  };
-  const handleLeave = () => {
-    mx.set(0);
-    my.set(0);
-  };
+  const { cardRef, tiltStyle, handleMove, handleLeave } = useTiltCard();
 
   useEffect(() => {
     const el = numRef.current;
@@ -61,7 +44,7 @@ function StatCard({ stat }) {
       ref={cardRef}
       onMouseMove={handleMove}
       onMouseLeave={handleLeave}
-      style={{ rotateX, rotateY, transformPerspective: 900 }}
+      style={{ ...tiltStyle }}
       whileHover={{ scale: 1.02 }}
       transition={{ type: "spring", stiffness: 200, damping: 22 }}
       className="group relative overflow-hidden rounded-[8px] border border-hairline"
@@ -111,7 +94,7 @@ export default function Stats() {
               key={stat.label}
               initial={{ opacity: 0, y: 48 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
+              viewport={{ once: true, amount: 0 }}
               transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: i * 0.15 }}
             >
               <StatCard stat={stat} />

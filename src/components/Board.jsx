@@ -1,18 +1,9 @@
 import { useRef } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-
 import Reveal from "./Reveal";
 import { board } from "../data/content";
 
 const ease = [0.22, 1, 0.36, 1];
-
-function splitLines(text, wordsPerLine = 8) {
-  const words = text.split(" ");
-  const lines = [];
-  for (let i = 0; i < words.length; i += wordsPerLine)
-    lines.push(words.slice(i, i + wordsPerLine).join(" "));
-  return lines;
-}
 
 function MemberCard({ m }) {
   const cardRef = useRef(null);
@@ -29,12 +20,7 @@ function MemberCard({ m }) {
     mx.set((e.clientX - rect.left) / rect.width - 0.5);
     my.set((e.clientY - rect.top) / rect.height - 0.5);
   };
-  const handleLeave = () => {
-    mx.set(0);
-    my.set(0);
-  };
-
-  const lines = splitLines(m.bio);
+  const handleLeave = () => { mx.set(0); my.set(0); };
 
   return (
     <motion.div
@@ -50,9 +36,10 @@ function MemberCard({ m }) {
         <motion.img
           src={m.photo}
           alt={m.name}
+          loading="lazy"
           initial={{ scale: 1.08 }}
           whileInView={{ scale: 1 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0 }}
           transition={{ duration: 1.1, ease }}
           className="h-full w-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0"
         />
@@ -73,20 +60,15 @@ function MemberCard({ m }) {
       </div>
 
       <div className="p-6 md:p-8">
-        <p className="text-sm leading-relaxed text-parchment-dim">
-          {lines.map((line, i) => (
-            <motion.span
-              key={i}
-              className="block overflow-hidden"
-              initial={{ clipPath: "inset(0 100% 0 0)" }}
-              whileInView={{ clipPath: "inset(0 0% 0 0)" }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.7, ease, delay: 0.05 + i * 0.08 }}
-            >
-              {line}{" "}
-            </motion.span>
-          ))}
-        </p>
+        <motion.p
+          className="text-sm leading-relaxed text-parchment-dim"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0 }}
+          transition={{ duration: 0.6, ease, delay: 0.2 }}
+        >
+          {m.bio}
+        </motion.p>
       </div>
     </motion.div>
   );
@@ -109,7 +91,7 @@ export default function Board() {
               key={m.name}
               initial={{ opacity: 0, y: 48 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
+              viewport={{ once: true, amount: 0 }}
               transition={{ duration: 0.8, ease, delay: i * 0.15 }}
               className="h-full"
             >
