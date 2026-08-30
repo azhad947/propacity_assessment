@@ -1,15 +1,5 @@
-// All copy, links and media below are sourced directly from https://www.murec.com/
-// (Home page) — content is unmodified in substance, only re-composed into a new UI.
-//
-// Assets are self-hosted under public/images/ (run scripts/download-assets.sh to
-// fetch them) rather than hotlinked, since murec.com's CDN blocks requests that
-// don't carry its own Referer/Origin header. Vite serves public/ at the site
-// root, so this path works identically in dev, on Vercel, on Netlify, or any
-// static host — no proxy needed.
-//
-// If you'd rather proxy live instead of committing the files, switch this back
-// to "/api/cdn" — api/cdn/[...path].js (Vercel) and netlify/edge-functions/cdn.js
-// (Netlify) both still exist and do that.
+// All copy, links and media sourced from https://www.murec.com/
+// Assets are self-hosted under public/images/ — Vite serves public/ at the site root.
 
 export const IMG = "/images";
 
