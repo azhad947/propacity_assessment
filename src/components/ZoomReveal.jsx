@@ -1,12 +1,6 @@
 import { useEffect, useRef } from "react";
 import { gsap, prefersReducedMotion } from "../lib/gsap";
 
-// Premium scroll-pinned cinematic interlude.
-// Phase 1 — 5 images float in from different positions with slight rotations
-//            while the editorial statement fades in word by word.
-// Phase 2 — all images converge to center, stack, and the hero image
-//            expands to fill the viewport.
-// Phase 3 — ink overlay dissolves in, releasing into the next section.
 export default function ZoomReveal({ images, lines }) {
   const wrapRef   = useRef(null);
   const stageRef  = useRef(null);
@@ -26,7 +20,6 @@ export default function ZoomReveal({ images, lines }) {
     const imgs  = imgsRef.current.filter(Boolean);
 
     const ctx = gsap.context(() => {
-      // Set initial states
       gsap.set(words, { opacity: 0, y: 22 });
       gsap.set(imgs,  { opacity: 0 });
       gsap.set(hero,  { opacity: 0, scale: 0.08, clipPath: "inset(4% 4% 4% 4% round 12px)" });
@@ -43,12 +36,10 @@ export default function ZoomReveal({ images, lines }) {
         },
       });
 
-      // ── Phase 1 (0 → 0.35): floating images drift in ──────────────────────
       imgs.forEach((img, i) => {
         tl.to(img, { opacity: 1, duration: 0.08 }, i * 0.04);
       });
 
-      // ── Phase 2 (0.05 → 0.45): words reveal one by one ───────────────────
       words.forEach((word, i) => {
         tl.to(
           word,
@@ -57,10 +48,8 @@ export default function ZoomReveal({ images, lines }) {
         );
       });
 
-      // ── Phase 3 (0.45 → 0.55): words fade out, images start converging ───
       tl.to(words, { opacity: 0, y: -18, duration: 0.08, stagger: 0.01 }, 0.45);
 
-      // Each floating image converges to center and fades
       imgs.forEach((img) => {
         tl.to(
           img,
@@ -76,7 +65,6 @@ export default function ZoomReveal({ images, lines }) {
         );
       });
 
-      // ── Phase 4 (0.55 → 0.85): hero image expands to fullscreen ──────────
       tl.to(
         hero,
         {
@@ -89,16 +77,13 @@ export default function ZoomReveal({ images, lines }) {
         0.55,
       );
 
-      // ── Phase 5 (0.82 → 1): ink dissolve out ─────────────────────────────
       tl.to(overlay, { opacity: 1, duration: 0.18, ease: "none" }, 0.82);
     }, wrap);
 
     return () => ctx.revert();
   }, []);
 
-  // Layout config for the 4 floating logo cards (excluding hero photo)
-  // No fixed height — cards size to their content so logos are never cropped.
-  // object-contain + generous padding ensures the full logo is always visible.
+
   const floatConfig = [
     { top: "10%", left: "11%",  w: "w-44 md:w-60", rot: "-5deg", x: "-18px", y: "24px"  },
     { top: "10%", left: "75%", w: "w-36 md:w-48", rot: "4deg",  x: "18px",  y: "-12px" },
@@ -112,7 +97,6 @@ export default function ZoomReveal({ images, lines }) {
         ref={stageRef}
         className="relative h-screen w-full overflow-hidden bg-ink"
       >
-        {/* ── Floating logo cards ── */}
         {floatConfig.map((cfg, i) => (
           <div
             key={i}
@@ -133,7 +117,6 @@ export default function ZoomReveal({ images, lines }) {
           </div>
         ))}
 
-        {/* ── Editorial statement ── */}
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center">
           <p className="font-display text-3xl leading-[1.55] text-parchment sm:text-4xl md:text-6xl md:leading-[1.5]">
             {lines.map((line, li) => (
@@ -158,7 +141,6 @@ export default function ZoomReveal({ images, lines }) {
           </p>
         </div>
 
-        {/* ── Hero image — expands to fullscreen ── */}
         <div
           ref={heroRef}
           className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center will-change-transform"
@@ -168,14 +150,12 @@ export default function ZoomReveal({ images, lines }) {
             transform: "scale(0.08)",
           }}
         >
-          {/* Dark surface so the wide logo has a proper backdrop */}
           <div className="absolute inset-0 bg-ink" />
           <img
             src={images[0]}
             alt="MUREC"
             className="relative z-10 max-h-[55%] max-w-[70%] object-contain drop-shadow-[0_0_80px_rgba(185,143,82,0.3)]"
           />
-          {/* Subtle brass glow behind the logo */}
           <div
             className="pointer-events-none absolute inset-0"
             style={{
@@ -185,7 +165,6 @@ export default function ZoomReveal({ images, lines }) {
           />
         </div>
 
-        {/* ── Ink dissolve ── */}
         <div
           ref={overlayRef}
           className="pointer-events-none absolute inset-0 z-30 bg-ink"

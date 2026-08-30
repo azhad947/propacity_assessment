@@ -1,11 +1,7 @@
 import { useEffect, useRef } from "react";
 import { gsap, prefersReducedMotion } from "../lib/gsap";
 
-// Wrap an image (or any visual) in a slightly oversized, absolutely
-// positioned layer that drifts opposite to scroll direction, continuously,
-// for the whole time its parent section is in view. This is what makes an
-// image feel like it's moving *with* the page rather than sitting still
-// until the next section snaps in.
+
 export default function ParallaxImage({
   children,
   speed = 0.14,
@@ -36,7 +32,6 @@ export default function ParallaxImage({
     });
 
     return () => ctx.revert();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [speed]);
 
   return (

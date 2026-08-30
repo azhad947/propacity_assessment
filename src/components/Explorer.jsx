@@ -13,7 +13,6 @@ export default function Explorer() {
   return (
     <section id="collection" className="relative bg-ink px-6 py-24 md:px-10 md:py-32">
       <div className="mx-auto max-w-[1400px]">
-        {/* Header */}
         <div className="mb-14 flex flex-col gap-4 md:mb-20 md:flex-row md:items-end md:justify-between">
           <Reveal scrub y={48}>
             <p className="eyebrow mb-4 text-moss">What Guides Us</p>
@@ -30,7 +29,6 @@ export default function Explorer() {
           </Reveal>
         </div>
 
-        {/* Tab rail */}
         <Reveal delay={0.1} className="mb-10 flex flex-wrap gap-3 border-b border-hairline pb-6 md:mb-14">
           {explorer.map((item, i) => (
             <button
@@ -47,14 +45,11 @@ export default function Explorer() {
           ))}
         </Reveal>
 
-        {/* Content stage */}
         <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-2 md:gap-16">
 
-          {/* Image panel — wide aspect for logos, portrait for photos */}
           <div className={`relative w-full overflow-hidden rounded-[6px] bg-surface ${
             logo ? "aspect-[16/9]" : "aspect-[4/5] md:aspect-[3/4]"
           }`}>
-            {/* Brass ambient glow */}
             <AnimatePresence>
               <motion.div
                 key={current.key + "-glow"}
@@ -106,7 +101,6 @@ export default function Explorer() {
             </AnimatePresence>
           </div>
 
-          {/* Text panel */}
           <AnimatePresence mode="wait">
             <motion.div
               key={current.key}

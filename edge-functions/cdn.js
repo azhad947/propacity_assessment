@@ -1,8 +1,3 @@
-// Netlify Edge Function — identical behaviour to api/cdn/[...path].js, for
-// deployments on Netlify instead of Vercel. Netlify Edge Functions use the
-// same Fetch API Request/Response shape, so the logic is a direct port.
-// Wired up via the [[edge_functions]] block in netlify.toml.
-
 const UPSTREAM_BASE = "https://www.murec.com/images";
 const PASSTHROUGH_HEADERS = [
   "content-type",

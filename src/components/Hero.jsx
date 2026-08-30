@@ -3,7 +3,6 @@ import { motion, useMotionValue, useSpring } from "framer-motion";
 import { gsap, prefersReducedMotion } from "../lib/gsap";
 import { hero } from "../data/content";
 
-// Split a string into individual letter spans for staggered reveal
 function SplitText({ text, className }) {
   return (
     <span className={className} aria-label={text}>
@@ -28,10 +27,6 @@ export default function Hero() {
   const ctaRef = useRef(null);
   const [videoReady, setVideoReady] = useState(false);
 
-  // ── Video autoplay reliability ──────────────────────────────────────────────
-  // Assets now come through the Vite /cdn proxy which spoofs the Referer header,
-  // so the murec.com CDN hotlink protection no longer blocks the request.
-  // We still handle the browser autoplay policy edge-cases below.
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return undefined;
@@ -67,7 +62,6 @@ export default function Hero() {
     };
   }, []);
 
-  // ── Cinematic entrance + scroll exit ───────────────────────────────────────
   useEffect(() => {
     const reduced = prefersReducedMotion();
 
@@ -82,14 +76,12 @@ export default function Hero() {
 
       const tl = gsap.timeline({ delay: 0.3, defaults: { ease: "power4.out" } });
 
-      // 1. Eyebrow wipes in from left via clip-path
       tl.fromTo(
         ".hero-eyebrow",
         { clipPath: "inset(0% 100% 0% 0%)", opacity: 1 },
         { clipPath: "inset(0% 0% 0% 0%)", duration: 0.9 },
       );
 
-      // 2. "MUREC" — each letter drops from above with stagger
       tl.fromTo(
         ".hero-letter",
         { opacity: 0, y: -60, rotateX: -90 },
@@ -104,7 +96,6 @@ export default function Hero() {
         "-=0.5",
       );
 
-      // 3. Subtitle fades up with a slight blur clear
       tl.fromTo(
         ".hero-sub",
         { opacity: 0, y: 22, filter: "blur(6px)" },
@@ -112,7 +103,6 @@ export default function Hero() {
         "-=0.6",
       );
 
-      // 4. CTA scales in from slightly smaller
       tl.fromTo(
         ".hero-cta",
         { opacity: 0, scale: 0.88, y: 12 },
@@ -120,7 +110,6 @@ export default function Hero() {
         "-=0.55",
       );
 
-      // 5. Scroll cue fades in last
       tl.fromTo(
         ".hero-scroll-cue",
         { opacity: 0, y: 10 },
@@ -128,7 +117,6 @@ export default function Hero() {
         "-=0.3",
       );
 
-      // ── Scroll exit: video zooms, content lifts & fades ──────────────────
       gsap.fromTo(
         videoWrapRef.current,
         { scale: 1 },
@@ -164,7 +152,6 @@ export default function Hero() {
     return () => ctx.revert();
   }, []);
 
-  // ── Magnetic CTA button ─────────────────────────────────────────────────────
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
   const sx = useSpring(mx, { stiffness: 200, damping: 18 });
@@ -183,16 +170,7 @@ export default function Hero() {
       ref={sectionRef}
       className="relative h-[100svh] min-h-[560px] w-full overflow-hidden bg-ink"
     >
-      {/* ── Background video ── */}
       <div ref={videoWrapRef} className="absolute inset-0 will-change-transform">
-        <img
-          src={hero.poster}
-          alt=""
-          aria-hidden="true"
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
-            videoReady ? "opacity-0" : "opacity-70"
-          }`}
-        />
         <video
           ref={videoRef}
           className={`h-full w-full object-cover transition-opacity duration-1000 ${
@@ -206,18 +184,15 @@ export default function Hero() {
           playsInline
           preload="auto"
         />
-        {/* Vignette layers */}
         <div className="absolute inset-0 bg-gradient-to-b from-ink/75 via-ink/25 to-ink" />
         <div className="absolute inset-0 bg-gradient-to-r from-ink/40 via-transparent to-ink/40" />
         <div className="absolute inset-0 bg-noise" />
       </div>
 
-      {/* ── Hero content ── */}
       <div
         ref={contentRef}
         className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center"
       >
-        {/* Eyebrow — clip-path wipe */}
         <p
           className="hero-eyebrow eyebrow mb-8 text-brass-bright"
           style={{ opacity: 1, clipPath: "inset(0% 100% 0% 0%)" }}
@@ -225,7 +200,6 @@ export default function Hero() {
           {hero.eyebrow}
         </p>
 
-        {/* Title — per-letter drop */}
         <h1
           className="font-display text-[18vw] leading-[0.88] tracking-tight text-parchment sm:text-[11vw] md:text-[8.5rem]"
           style={{ perspective: "600px" }}
@@ -233,7 +207,6 @@ export default function Hero() {
           <SplitText text={hero.title} />
         </h1>
 
-        {/* Subtitle */}
         <p
           className="hero-sub mt-6 max-w-md font-display text-lg italic text-parchment-dim md:text-xl"
           style={{ opacity: 0 }}
@@ -241,7 +214,6 @@ export default function Hero() {
           {hero.sub}
         </p>
 
-        {/* Magnetic CTA */}
         <motion.a
           ref={ctaRef}
           href={hero.cta.href}
@@ -263,7 +235,6 @@ export default function Hero() {
         </motion.a>
       </div>
 
-      {/* ── Scroll cue ── */}
       <div
         className="hero-scroll-cue absolute inset-x-0 bottom-8 z-10 flex flex-col items-center gap-3"
         style={{ opacity: 0 }}

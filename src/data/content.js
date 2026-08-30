@@ -1,5 +1,4 @@
-// All copy, links and media sourced from https://www.murec.com/
-// Assets are self-hosted under public/images/ — Vite serves public/ at the site root.
+
 
 export const IMG = "/images";
 
@@ -23,12 +22,7 @@ export const hero = {
   cta: { label: "Learn More", href: "https://murec.com/about.php" },
 };
 
-// The three-way explorer — direct analogue of Timeless's Flavours / Bar / Snacks
-// tabbed menu, re-purposed with Murec's three home-page pillars.
-// madhusudan.webp = 1009×428 wide badge logo (2.36:1)
-// murec.webp / murec.png = 202×107 wide wordmark (1.89:1)
-// All three are logos — none are photos. isLogo=true tells components
-// to use object-contain + wide aspect ratio instead of object-cover portrait.
+
 export const explorer = [
   {
     key: "legacy",

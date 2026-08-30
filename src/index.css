@@ -107,7 +107,6 @@ body {
   transform-origin: left;
 }
 
-/* visible keyboard focus, kept quiet but unmistakable */
 a:focus-visible,
 button:focus-visible {
   outline: 1px solid var(--color-brass-bright);

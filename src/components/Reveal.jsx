@@ -1,8 +1,7 @@
 import { useEffect, useRef } from "react";
 import { gsap, prefersReducedMotion } from "../lib/gsap";
 
-// scrub=false  → one-shot entrance (original behaviour)
-// scrub=true   → element slides continuously tied to scroll position
+
 export default function Reveal({
   children,
   delay = 0,
@@ -23,8 +22,7 @@ export default function Reveal({
 
     const ctx = gsap.context(() => {
       if (scrub) {
-        // Slide from below into place as the element scrolls into view,
-        // then drift upward as it scrolls out — continuous, scrubbed motion.
+  
         gsap.fromTo(
           el,
           { opacity: 0, y: y * 1.5 },
@@ -61,7 +59,6 @@ export default function Reveal({
     });
 
     return () => ctx.revert();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [delay, y, scrub]);
 
   return (

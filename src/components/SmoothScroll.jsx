@@ -2,12 +2,6 @@ import { useEffect } from "react";
 import Lenis from "lenis";
 import { gsap, ScrollTrigger, prefersReducedMotion } from "../lib/gsap";
 
-// One smooth-scroll engine for the whole app. Lenis owns the actual scroll
-// physics (the momentum/easing that makes scrolling itself feel premium);
-// GSAP's ticker drives Lenis's rAF loop so every ScrollTrigger-based
-// animation reads from the same clock instead of two rAF loops drifting out
-// of sync with each other, which is what causes scroll-linked animation to
-// feel laggy or stuttery.
 export default function SmoothScroll({ children }) {
   useEffect(() => {
     if (prefersReducedMotion()) return undefined;

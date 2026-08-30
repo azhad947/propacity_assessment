@@ -11,8 +11,7 @@ export default function Philosophy() {
 
   return (
     <section className="relative overflow-hidden bg-ink-2 px-6 py-24 md:px-10 md:py-36">
-      {/* ambient gradient accents drift at their own pace on scroll, giving
-          the statement a slow sense of depth rather than a static backdrop */}
+
       <div
         ref={blobA}
         className="pointer-events-none absolute -left-32 top-0 h-[26rem] w-[26rem] rounded-full bg-moss/15 blur-[110px]"

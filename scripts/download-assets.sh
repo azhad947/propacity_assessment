@@ -1,13 +1,3 @@
-#!/usr/bin/env bash
-# Run this on your own machine (not in a restricted sandbox) from the project root:
-#   chmod +x scripts/download-assets.sh
-#   ./scripts/download-assets.sh
-#
-# Downloads every Murec asset the site references into public/images/, using
-# the same Referer/Origin spoof the proxy uses, so this works even though a
-# plain `curl https://www.murec.com/images/x.webp` without those headers gets
-# blocked by their hotlink protection.
-
 set -euo pipefail
 
 DEST="public/images"

@@ -12,8 +12,8 @@ import { explorer, associations } from "./data/content";
 
 export default function App() {
   const zoomImages = [
-    explorer[0].image,   // madhusudan.webp  — hero (expands fullscreen)
-    explorer[2].image,   // murec.webp
+    explorer[0].image,   
+    explorer[2].image,   
     associations.logos[0],
     associations.logos[1],
     associations.logos[2],
