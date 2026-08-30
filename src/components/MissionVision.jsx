@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import { mission, vision } from "../data/content";
 import Reveal from "./Reveal";
 import ParallaxImage from "./ParallaxImage";
-import { splitLines } from "../lib/text";
 
 const ease = [0.22, 1, 0.36, 1];
 
